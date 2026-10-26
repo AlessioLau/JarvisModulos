@@ -1,56 +1,54 @@
 # 🤖 Jarvis - Módulo Diario / Rutina Diaria
 
-Primer módulo de la suite de organización integral **Jarvis**, diseñado con una estética compacta, táctil y visualmente gamificada inspirada en los **widgets de Duolingo para celular**.
+Primer módulo de la suite de organización integral **Jarvis**, diseñado con soporte **PWA (Progressive Web App)** para celulares y una interfaz especializada **Command Center para PC**.
 
 ---
 
-## ✨ Características Principales
+## ✨ Interfaces Adaptativas
 
-### 1. 🎯 División del Día en 3 Bloques
-- **📌 Tareas Obligatorias:** Metas esenciales del día (ej: *5hs de Estudio / Programación*, *Rutina de Salud*). Incluyen contadores numéricos y de horas con barra de progreso interactiva (+ / -).
-- **🎁 Recompensas & Ocio (Protocolo con Candado 🔒):** Beneficios desbloqueables (ej: *3hs de Gaming / Videojuegos*, *Cine / Series*, *Tiempo Libre*).
-  - **Mecánica de Desbloqueo:** Si intentas acceder a las recompensas antes de cumplir tus tareas obligatorias, el candado vibra con un aviso y sonido de advertencia.
-  - Al completar el 100% de las obligatorias: **¡Explosión de confeti, fanfarria sonora y desbloqueo total!** Las recompensas cambian a estado brillante 🔓 para ser reclamadas con satisfacción.
-- **🌟 Tareas Opcionales:** Hábitos complementarios (ej: *Lectura de desarrollo personal*, *Hidratación*, *Organización*).
+### 📱 1. En Celular (Progressive Web App - Estilo Widget Duolingo)
+- **Instalable en la pantalla de inicio:** Funciona como una aplicación nativa completa, sin barras de navegación del navegador (`standalone mode`).
+- **Diseño compacto táctil:** Proporciones idénticas al widget de Duolingo de Android/iOS.
+- **Modo Offline:** Incluye Service Worker para funcionar incluso sin conexión a internet.
+- **Aviso de instalación directo:** Al abrirla en tu celular, aparece un banner para instalar con un solo clic.
 
-### 2. 📅 Calendario con Histórico y Rachas (Streaks 🔥)
-- **Contador de Racha Duolingo:** Sigue tus días consecutivos cumpliendo tus metas obligatorias con el icono de fuego 🔥.
-- **Récord Histórico:** Muestra tu mejor racha de todos los tiempos y los días totales completados al 100%.
-- **Navegación Histórica:** Puedes viajar en el tiempo a cualquier día anterior o futuro para revisar qué hiciste o registrar actividades pasadas.
-- **Copias de Seguridad:** Opciones integradas para **Exportar** e **Importar** tu histórico en formato JSON.
-
-### 3. 🔊 Sonidos Sintetizados (Web Audio API)
-- Chime de checkmark alegre al estilo Duolingo.
-- Fanfarria triunfal al desbloquear las recompensas.
-- Toque táctil y boop de candado cerrado cuando las recompensas siguen bloqueadas.
-- Botón para silenciar o reactivar sonidos con un solo clic.
-
-### 4. 📱 Modos de Visualización
-- **Modo Widget Móvil:** Marco compacto con proporciones de celular, idéntico al widget de Duolingo en pantalla de inicio.
-- **Modo Expandido:** Vista ampliada de panel de control para pantallas de escritorio.
-- **Avatar Jarvis Reactivo:** Un asistente inteligente holográfico que te habla y cambia de expresión según tu progreso diario.
-
----
-
-## 🚀 Cómo Iniciar la Aplicación
-
-Para abrir la aplicación en tu navegador:
-
-```bash
-npm run dev
-```
-
-Luego abre la URL local en tu navegador:
-👉 **http://localhost:5173**
+### 💻 2. En PC (Command Center Dashboard)
+Una interfaz pensada para aprovechar el ancho del monitor con un panel de 3 columnas:
+- **Columna Izquierda (Asistente & Navegación):**
+  - Holograma / Núcleo de Jarvis reactivo.
+  - **Mini Calendario Mensual integrado:** Viaja a cualquier día del mes con un solo clic directamente desde la pantalla.
+  - Métricas de racha Duolingo (Racha actual 🔥, récord histórico 🏆, días 100% completados).
+  - Exportación e importación de backups JSON.
+- **Columna Central (Metas & Hábitos):**
+  - Selector de fecha y barra de progreso animada.
+  - **Tareas Obligatorias:** Contadores de horas táctiles (`+` / `-`), asignación de días específicos (ej: *Gym Lun, Mié, Vie*).
+  - **Tareas Opcionales & Hábitos:** Lectura, agua, meditación.
+- **Columna Derecha (Bóveda de Recompensas):**
+  - Panel interactivo con estado del protocolo en vivo (**🔒 ACCESO DENEGADO** vs **🔓 ACCESO AUTORIZADO**).
+  - Recompensas canjeables (Gaming, Cine, Salidas) con efectos de sonido arcade y confeti.
+  - Registro de recompensas ya disfrutadas en el día.
+- **Botón `📱 Vista Celular`:** Puedes alternar entre la vista de PC y la vista widget de celular cuando quieras.
 
 ---
 
-## 🛠️ Tecnologías Utilizadas
+## 📲 Cómo Usar e Instalar en tu Celular
+
+1. Inicia el servidor con acceso a tu red local:
+   ```bash
+   npm run dev -- --host
+   ```
+2. Vite te mostrará tu dirección de red local (ejemplo: `http://192.168.1.15:5173`).
+3. Abre esa dirección en el navegador de tu celular (conectado al mismo Wi-Fi):
+   - **En Android (Chrome):** Toca el botón flotante **"Instalar Jarvis en tu celular"** o en el menú de Chrome selecciona *"Agregar a la pantalla principal"*.
+   - **En iPhone (Safari):** Toca el botón de *Compartir* (cuadrado con flecha) y selecciona *"Agregar al inicio"*.
+4. ¡Listo! Se abrirá como una aplicación nativa con su icono oficial de Jarvis.
+
+---
+
+## 🛠️ Tecnologías
+- **PWA Nactiva:** Service Worker (`sw.js`), `manifest.json`, iconos adaptativos SVG/PNG (192x192, 512x512, Apple touch).
 - **React 18 & TypeScript**
-- **Vite** (rápido y optimizado)
-- **Tailwind CSS** con sombras 3D y animaciones personalizadas
-- **Lucide React** (iconografía limpia y moderna)
-- **Canvas-Confetti** (animaciones de celebración)
-- **Date-fns** (cálculo de fechas y rachas)
-- **Web Audio API** (efectos de sonido nativos sin archivos externos)
-
+- **Vite 6**
+- **Tailwind CSS**
+- **Lucide React & Canvas-Confetti**
+- **Web Audio API** (efectos de sonido nativos)
