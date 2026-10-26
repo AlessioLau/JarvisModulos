@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <radialGradient id="bgGlow" cx="50%" cy="30%" r="70%">
+      <stop offset="0%" stop-color="#1e293b"/>
+      <stop offset="100%" stop-color="#0b0f19"/>
+    </radialGradient>
+    <linearGradient id="cyanGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38bdf8"/>
+      <stop offset="50%" stop-color="#06b6d4"/>
+      <stop offset="100%" stop-color="#0891b2"/>
+    </linearGradient>
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fbbf24"/>
+      <stop offset="100%" stop-color="#f59e0b"/>
+    </linearGradient>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="12" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <!-- Background with rounded corners like mobile app icon -->
+  <rect width="512" height="512" rx="128" fill="url(#bgGlow)" />
+  <rect width="500" height="500" x="6" y="6" rx="122" fill="none" stroke="url(#cyanGrad)" stroke-width="8" opacity="0.4" />
+
+  <!-- Outer Reactor Ring -->
+  <circle cx="256" cy="256" r="170" fill="none" stroke="#1e293b" stroke-width="24"/>
+  <circle cx="256" cy="256" r="170" fill="none" stroke="url(#cyanGrad)" stroke-width="12" stroke-dasharray="80 30 120 40" filter="url(#glow)"/>
+
+  <!-- Inner glowing circle -->
+  <circle cx="256" cy="256" r="110" fill="#0f172a" stroke="url(#cyanGrad)" stroke-width="8" filter="url(#glow)"/>
+
+  <!-- Center 'J' Logo & Tech Flame -->
+  <path d="M 290 180 L 290 270 C 290 310 260 335 220 335 C 185 335 160 315 155 285 L 195 280 C 198 295 210 305 225 305 C 245 305 255 290 255 270 L 255 180 Z" fill="url(#cyanGrad)" filter="url(#glow)"/>
+
+  <!-- Duolingo Fire Flame on top right of the Core -->
+  <path d="M 330 150 C 330 150 360 170 360 200 C 360 220 345 235 325 235 C 340 215 335 190 325 180 C 320 195 310 205 310 220 C 310 240 325 255 345 255 C 375 255 390 225 390 195 C 390 155 345 125 330 150 Z" fill="url(#goldGrad)" filter="url(#glow)" />
+</svg>
