@@ -1,0 +1,136 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+body {
+  margin: 0;
+  background-color: #0b0f19;
+  color: #f1f5f9;
+  font-family: 'Nunito', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  overflow-x: hidden;
+}
+
+/* Custom 3D Duolingo Button & Card Styles */
+.duo-btn-green {
+  background-color: #58cc02;
+  box-shadow: 0 4px 0 #46a302;
+  transition: all 0.1s ease-in-out;
+}
+.duo-btn-green:hover {
+  filter: brightness(1.05);
+}
+.duo-btn-green:active {
+  transform: translateY(3px);
+  box-shadow: 0 1px 0 #46a302;
+}
+
+.duo-btn-cyan {
+  background-color: #06b6d4;
+  box-shadow: 0 4px 0 #0891b2;
+  transition: all 0.1s ease-in-out;
+}
+.duo-btn-cyan:hover {
+  filter: brightness(1.05);
+}
+.duo-btn-cyan:active {
+  transform: translateY(3px);
+  box-shadow: 0 1px 0 #0891b2;
+}
+
+.duo-btn-orange {
+  background-color: #ff9600;
+  box-shadow: 0 4px 0 #d97706;
+  transition: all 0.1s ease-in-out;
+}
+.duo-btn-orange:hover {
+  filter: brightness(1.05);
+}
+.duo-btn-orange:active {
+  transform: translateY(3px);
+  box-shadow: 0 1px 0 #d97706;
+}
+
+.duo-btn-purple {
+  background-color: #a855f7;
+  box-shadow: 0 4px 0 #7e22ce;
+  transition: all 0.1s ease-in-out;
+}
+.duo-btn-purple:hover {
+  filter: brightness(1.05);
+}
+.duo-btn-purple:active {
+  transform: translateY(3px);
+  box-shadow: 0 1px 0 #7e22ce;
+}
+
+.duo-btn-gray {
+  background-color: #334155;
+  box-shadow: 0 4px 0 #1e293b;
+  transition: all 0.1s ease-in-out;
+}
+.duo-btn-gray:hover {
+  background-color: #3b4d66;
+}
+.duo-btn-gray:active {
+  transform: translateY(3px);
+  box-shadow: 0 1px 0 #1e293b;
+}
+
+/* Card 3D border */
+.duo-card {
+  background-color: #1e293b;
+  border: 2px solid #334155;
+  border-bottom-width: 5px;
+  border-radius: 1.25rem;
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.duo-card:hover {
+  border-color: #475569;
+}
+
+.duo-card-locked {
+  background: linear-gradient(135deg, rgba(30, 41, 59, 0.6) 0%, rgba(15, 23, 42, 0.8) 100%);
+  border: 2px dashed #475569;
+  border-bottom-width: 4px;
+}
+
+/* Pulse glow for unlocked rewards */
+@keyframes glowPulse {
+  0%, 100% {
+    box-shadow: 0 0 15px rgba(234, 179, 8, 0.4), 0 4px 0 #ca8a04;
+  }
+  50% {
+    box-shadow: 0 0 25px rgba(234, 179, 8, 0.7), 0 4px 0 #ca8a04;
+  }
+}
+
+.duo-reward-unlocked {
+  animation: glowPulse 2s infinite ease-in-out;
+}
+
+/* Duolingo widget frame */
+.duo-widget-container {
+  background: radial-gradient(circle at 50% 0%, #1e293b 0%, #0f172a 100%);
+  box-shadow: 0 20px 50px -10px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+
+/* Custom scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #0f172a;
+}
+::-webkit-scrollbar-thumb {
+  background: #334155;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #475569;
+}
