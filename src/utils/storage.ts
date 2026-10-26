@@ -1,5 +1,36 @@
 import { DayRecord, StreakStats, Task } from '../types';
-import { format, subDays, parseISO, isSameDay } from 'date-fns';
+import { format, subDays, parseISO, isSameDay, getDay } from 'date-fns';
+
+export const WEEK_DAYS = [
+  { id: 1, label: 'L', name: 'Lunes' },
+  { id: 2, label: 'M', name: 'Martes' },
+  { id: 3, label: 'M', name: 'Miércoles' },
+  { id: 4, label: 'J', name: 'Jueves' },
+  { id: 5, label: 'V', name: 'Viernes' },
+  { id: 6, label: 'S', name: 'Sábado' },
+  { id: 0, label: 'D', name: 'Domingo' }
+];
+
+export const formatActiveDays = (activeDays?: number[]): string => {
+  if (!activeDays || activeDays.length === 0 || activeDays.length === 7) {
+    return 'Todos los días';
+  }
+  if (activeDays.length === 5 && [1, 2, 3, 4, 5].every(d => activeDays.includes(d))) {
+    return 'Lun a Vie';
+  }
+  if (activeDays.length === 2 && [6, 0].every(d => activeDays.includes(d))) {
+    return 'Fin de semana';
+  }
+  const dayMap: Record<number, string> = {
+    1: 'Lun', 2: 'Mar', 3: 'Mié', 4: 'Jue', 5: 'Vie', 6: 'Sáb', 0: 'Dom'
+  };
+  const sorted = [...activeDays].sort((a, b) => {
+    const orderA = a === 0 ? 7 : a;
+    const orderB = b === 0 ? 7 : b;
+    return orderA - orderB;
+  });
+  return sorted.map(d => dayMap[d]).join(', ');
+};
 
 const STORAGE_KEYS = {
   RECORDS: 'jarvis_daily_records_v1',
@@ -20,19 +51,21 @@ export const DEFAULT_TASK_TEMPLATES: Task[] = [
     hasCounter: true,
     currentValue: 0,
     targetValue: 5,
-    unit: 'hs'
+    unit: 'hs',
+    activeDays: [1, 2, 3, 4, 5, 6, 0] // Todos los días
   },
   {
     id: 'm2',
-    title: 'Rutina de Ejercicio / Salud',
-    description: 'Mover el cuerpo para recargar energía',
+    title: 'Rutina de Gym / Ejercicio',
+    description: 'Entrenamiento físico (3 días por semana)',
     category: 'mandatory',
     completed: false,
     icon: 'dumbbell',
     hasCounter: true,
     currentValue: 0,
     targetValue: 1,
-    unit: 'h'
+    unit: 'h',
+    activeDays: [1, 3, 5] // 3 días a la semana: Lunes, Miércoles y Viernes!
   },
   // Opcionales
   {
@@ -141,7 +174,16 @@ export const saveTaskTemplates = (templates: Task[]) => {
 };
 
 export const createDayRecordFromTemplate = (dateStr: string, templates: Task[]): DayRecord => {
-  const clonedTasks = templates.map((t) => ({
+  const targetDate = parseISO(dateStr);
+  const dayOfWeek = getDay(targetDate); // 0=Dom, 1=Lun, ..., 6=Sáb
+
+  // Only include tasks that are scheduled for this day of week
+  const applicableTemplates = templates.filter((t) => {
+    if (!t.activeDays || t.activeDays.length === 0) return true;
+    return t.activeDays.includes(dayOfWeek);
+  });
+
+  const clonedTasks = applicableTemplates.map((t) => ({
     ...t,
     id: `${t.id}-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
     completed: false,
@@ -310,3 +352,4 @@ export const seedInitialHistoryIfEmpty = () => {
 
   saveRecords(records);
 };
+

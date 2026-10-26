@@ -17,6 +17,10 @@ export interface Task {
   // For rewards
   rewardDuration?: string; // e.g. "3 hs"
   claimed?: boolean; // When the user taps to enjoy the reward
+
+  // Day-of-week scheduling: 1=Lun, 2=Mar, 3=Mié, 4=Jue, 5=Vie, 6=Sáb, 0=Dom
+  // If undefined or empty, it runs every day
+  activeDays?: number[];
 }
 
 export interface DayRecord {
@@ -39,3 +43,4 @@ export interface StreakStats {
 }
 
 export type ViewMode = 'widget' | 'expanded';
+

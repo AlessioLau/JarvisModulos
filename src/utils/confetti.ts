@@ -41,3 +41,4 @@ export const triggerTaskCheckConfetti = (x?: number, y?: number) => {
     colors: ['#58cc02', '#22d3ee', '#ffc800']
   });
 };
+

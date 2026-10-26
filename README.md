@@ -53,3 +53,4 @@ Luego abre la URL local en tu navegador:
 - **Canvas-Confetti** (animaciones de celebración)
 - **Date-fns** (cálculo de fechas y rachas)
 - **Web Audio API** (efectos de sonido nativos sin archivos externos)
+

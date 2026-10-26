@@ -33,6 +33,7 @@ export function App() {
   const [viewMode, setViewMode] = useState<ViewMode>('widget');
   const [isCalendarOpen, setIsCalendarOpen] = useState<boolean>(false);
   const [isNewTaskOpen, setIsNewTaskOpen] = useState<boolean>(false);
+  const [editingTask, setEditingTask] = useState<Task | null>(null);
 
   // Track previous mandatory unlock state to trigger celebration sound only on transition
   const prevUnlockedRef = useRef<boolean>(false);
@@ -41,7 +42,26 @@ export function App() {
   useEffect(() => {
     seedInitialHistoryIfEmpty();
     const loadedRecords = getSavedRecords();
-    const loadedTemplates = getTaskTemplates();
+    let loadedTemplates = getTaskTemplates();
+
+    // Ensure gym task has activeDays [1, 3, 5] (Lunes, Miércoles, Viernes)
+    let templatesUpdated = false;
+    loadedTemplates = loadedTemplates.map((t) => {
+      if ((t.title.toLowerCase().includes('ejercicio') || t.title.toLowerCase().includes('gym')) && (!t.activeDays || t.activeDays.length === 7)) {
+        templatesUpdated = true;
+        return {
+          ...t,
+          activeDays: [1, 3, 5],
+          description: 'Entrenamiento físico (3 días por semana: Lun, Mié, Vie)'
+        };
+      }
+      return t;
+    });
+
+    if (templatesUpdated) {
+      saveTaskTemplates(loadedTemplates);
+    }
+
     setRecords(loadedRecords);
     setTemplates(loadedTemplates);
 
@@ -194,25 +214,78 @@ export function App() {
     updateCurrentRecordTasks(newTasks);
   };
 
-  // Add new task
-  const handleAddTask = (
+  const handleOpenCreateTask = () => {
+    setEditingTask(null);
+    setIsNewTaskOpen(true);
+  };
+
+  const handleOpenEditTask = (task: Task) => {
+    setEditingTask(task);
+    setIsNewTaskOpen(true);
+  };
+
+  // Add or Edit task
+  const handleSaveTask = (
     taskData: Omit<Task, 'id' | 'completed'>,
-    saveAsTemplate: boolean
+    saveAsTemplate: boolean,
+    existingId?: string
   ) => {
-    const newTask: Task = {
-      ...taskData,
-      id: `task-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
-      completed: false
-    };
+    if (existingId) {
+      // Edit existing task in current record
+      const updatedTasks = currentRecord.tasks.map((t) => {
+        if (t.id === existingId) {
+          return {
+            ...t,
+            ...taskData
+          };
+        }
+        return t;
+      });
+      updateCurrentRecordTasks(updatedTasks);
 
-    const newTasks = [...currentRecord.tasks, newTask];
-    updateCurrentRecordTasks(newTasks);
+      if (saveAsTemplate) {
+        // Update template if found by id prefix or matching title
+        const updatedTemplates = templates.map((tmpl) => {
+          if (existingId.startsWith(tmpl.id) || tmpl.title.toLowerCase() === taskData.title.toLowerCase()) {
+            return {
+              ...tmpl,
+              ...taskData
+            };
+          }
+          return tmpl;
+        });
+        setTemplates(updatedTemplates);
+        saveTaskTemplates(updatedTemplates);
+      }
+    } else {
+      // Create new task
+      const newTask: Task = {
+        ...taskData,
+        id: `task-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
+        completed: false
+      };
 
-    if (saveAsTemplate) {
-      const newTemplates = [...templates, newTask];
-      setTemplates(newTemplates);
-      saveTaskTemplates(newTemplates);
+      const newTasks = [...currentRecord.tasks, newTask];
+      updateCurrentRecordTasks(newTasks);
+
+      if (saveAsTemplate) {
+        const newTemplates = [...templates, newTask];
+        setTemplates(newTemplates);
+        saveTaskTemplates(newTemplates);
+      }
     }
+  };
+
+  // Sync / refresh current day's tasks according to templates for this day of week
+  const handleSyncDayWithTemplates = () => {
+    sound.playClick();
+    const freshRecord = createDayRecordFromTemplate(
+      selectedDateStr,
+      templates.length > 0 ? templates : DEFAULT_TASK_TEMPLATES
+    );
+    const nextRecords = { ...records, [selectedDateStr]: freshRecord };
+    setRecords(nextRecords);
+    saveRecords(nextRecords);
   };
 
   // Reset to default
@@ -247,7 +320,7 @@ export function App() {
           soundEnabled={soundEnabled}
           onToggleSound={toggleSound}
           onOpenCalendar={() => setIsCalendarOpen(true)}
-          onOpenNewTask={() => setIsNewTaskOpen(true)}
+          onOpenNewTask={handleOpenCreateTask}
           viewMode={viewMode}
           onToggleViewMode={toggleViewMode}
           completionRate={completionRate}
@@ -282,7 +355,7 @@ export function App() {
             <div className="space-y-2.5">
               {mandatoryTasks.length === 0 ? (
                 <div className="text-center py-6 border-2 border-dashed border-slate-800 rounded-2xl text-slate-500 text-xs">
-                  Sin tareas obligatorias. ¡Toca "+ Nueva" para agregar una!
+                  Sin tareas obligatorias programadas para hoy. ¡Disfruta o agrega una!
                 </div>
               ) : (
                 mandatoryTasks.map((task) => (
@@ -292,6 +365,7 @@ export function App() {
                     onToggle={handleToggleTask}
                     onUpdateCounter={handleUpdateCounter}
                     onDelete={handleDeleteTask}
+                    onEdit={handleOpenEditTask}
                   />
                 ))
               )}
@@ -346,6 +420,7 @@ export function App() {
                     onToggle={handleToggleTask}
                     onClaimReward={handleClaimReward}
                     onDelete={handleDeleteTask}
+                    onEdit={handleOpenEditTask}
                   />
                 ))
               )}
@@ -379,6 +454,7 @@ export function App() {
                     onToggle={handleToggleTask}
                     onUpdateCounter={handleUpdateCounter}
                     onDelete={handleDeleteTask}
+                    onEdit={handleOpenEditTask}
                   />
                 ))
               )}
@@ -387,18 +463,29 @@ export function App() {
         </div>
 
         {/* Footer Widget Branding / Tip */}
-        <footer className="mt-5 pt-3 border-t border-slate-800/80 flex items-center justify-between text-[11px] text-slate-500 font-bold">
+        <footer className="mt-5 pt-3 border-t border-slate-800/80 flex items-center justify-between text-[11px] text-slate-500 font-bold flex-wrap gap-2">
           <div className="flex items-center gap-1">
             <CheckCircle2 className="w-3.5 h-3.5 text-cyan-500" />
             <span>Jarvis Habit Engine</span>
           </div>
-          <button
-            type="button"
-            onClick={() => setIsCalendarOpen(true)}
-            className="hover:text-cyan-400 transition-colors cursor-pointer"
-          >
-            Ver histórico completo →
-          </button>
+
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={handleSyncDayWithTemplates}
+              className="text-slate-400 hover:text-cyan-400 transition-colors flex items-center gap-1"
+              title="Aplica la configuración de días de la semana de tu rutina a este día"
+            >
+              <span>🔄 Sincronizar rutina del día</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setIsCalendarOpen(true)}
+              className="hover:text-cyan-400 transition-colors cursor-pointer"
+            >
+              Histórico →
+            </button>
+          </div>
         </footer>
       </div>
 
@@ -420,8 +507,12 @@ export function App() {
       {/* New Task / Reward Modal */}
       <NewTaskModal
         isOpen={isNewTaskOpen}
-        onClose={() => setIsNewTaskOpen(false)}
-        onAddTask={handleAddTask}
+        onClose={() => {
+          setIsNewTaskOpen(false);
+          setEditingTask(null);
+        }}
+        onSaveTask={handleSaveTask}
+        initialTask={editingTask}
       />
     </div>
   );

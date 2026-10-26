@@ -1,15 +1,17 @@
 import React, { useState } from 'react';
 import { Task } from '../types';
 import { TaskIcon } from './TaskIcon';
-import { Check, Lock, Unlock, Plus, Minus, Trash2, PartyPopper } from 'lucide-react';
+import { Check, Lock, Unlock, Plus, Minus, Trash2, PartyPopper, Pencil, Calendar } from 'lucide-react';
 import { sound } from '../utils/sound';
 import { triggerTaskCheckConfetti, triggerRewardUnlockConfetti } from '../utils/confetti';
+import { formatActiveDays } from '../utils/storage';
 
 interface TaskCardProps {
   task: Task;
   onToggle: (taskId: string) => void;
   onUpdateCounter?: (taskId: string, newValue: number) => void;
   onDelete?: (taskId: string) => void;
+  onEdit?: (task: Task) => void;
   rewardsUnlocked?: boolean;
   onClaimReward?: (taskId: string) => void;
 }
@@ -19,6 +21,7 @@ export const TaskCard: React.FC<TaskCardProps> = ({
   onToggle,
   onUpdateCounter,
   onDelete,
+  onEdit,
   rewardsUnlocked = true,
   onClaimReward
 }) => {
@@ -163,7 +166,7 @@ export const TaskCard: React.FC<TaskCardProps> = ({
 
         {/* Content */}
         <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
             <span
               className={`text-slate-400 group-hover:text-cyan-400 transition-colors ${
                 task.completed ? 'line-through text-slate-500' : ''
@@ -178,6 +181,14 @@ export const TaskCard: React.FC<TaskCardProps> = ({
             >
               {task.title}
             </h4>
+
+            {/* Active days pill if scheduled for specific days */}
+            {task.activeDays && task.activeDays.length > 0 && task.activeDays.length < 7 && (
+              <span className="text-[10px] font-extrabold text-cyan-300 bg-cyan-950/80 px-1.5 py-0.5 rounded-md border border-cyan-800/60 flex items-center gap-1 shrink-0">
+                <Calendar className="w-2.5 h-2.5 text-cyan-400" />
+                {formatActiveDays(task.activeDays)}
+              </span>
+            )}
           </div>
 
           {task.description && (
@@ -255,6 +266,22 @@ export const TaskCard: React.FC<TaskCardProps> = ({
                 </span>
               )}
             </div>
+          )}
+
+          {/* Edit action on hover */}
+          {onEdit && (
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                sound.playClick();
+                onEdit(task);
+              }}
+              className="opacity-0 group-hover:opacity-100 transition-opacity p-1.5 text-slate-500 hover:text-cyan-400 hover:bg-cyan-950/40 rounded-lg"
+              title="Editar tarea y días asignados"
+            >
+              <Pencil className="w-3.5 h-3.5" />
+            </button>
           )}
 
           {/* Delete action on hover */}
