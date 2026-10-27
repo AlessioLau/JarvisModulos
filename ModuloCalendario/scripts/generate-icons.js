@@ -115,3 +115,4 @@ function generatePNG(size, outputPath) {
 generatePNG(192, path.resolve('public', 'icon-192.png'));
 generatePNG(512, path.resolve('public', 'icon-512.png'));
 generatePNG(180, path.resolve('public', 'apple-touch-icon.png'));
+
